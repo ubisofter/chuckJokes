@@ -102,7 +102,7 @@ class JokeListViewModel @Inject constructor(private val repository: ChuckNorrisR
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            null // Обработка ошибки и возврат null в случае ошибки
+            null
         }
     }
 
