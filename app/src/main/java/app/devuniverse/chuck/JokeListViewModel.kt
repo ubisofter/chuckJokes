@@ -5,16 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import javax.inject.Inject
@@ -42,37 +39,37 @@ class JokeListViewModel @Inject constructor(private val repository: ChuckNorrisR
         }
     }
 
-    fun loadJokes() {
-        viewModelScope.launch {
-            try {
-                // Устанавливаем состояние загрузки в true
-                _isLoading.postValue(true)
-
-                // Загружаем шутку и изображение
-                val joke = repository.getRandomChuckNorrisJoke()
-                val jokeTitle = generateTitleFromText(repository.getRandomChuckNorrisJoke().value).toString().replace("\"", "\\\"")
-                val imageUrl = loadChuckNorrisJokeImage(joke.value)
-
-                // Выводим список шуток и URL изображения в логи
-                Log.d("JokeListViewModel", "Загружен список шуток: $joke")
-                Log.d("JokeListViewModel", "URL изображения: $imageUrl")
-                Log.d("JokeListViewModel", "Title шутки: $jokeTitle")
-
-                // Создаем объект, который содержит как шутку, так и URL изображения
-                val jokeWithImage = ChuckNorrisJokeWithImage(joke, imageUrl, jokeTitle)
-
-                // Обновляем LiveData, чтобы передать как шутку, так и URL изображения
-                _jokes.postValue(listOf(jokeWithImage))
-
-                // Устанавливаем состояние загрузки в false
-                _isLoading.postValue(false)
-            } catch (e: Exception) {
-                // Устанавливаем состояние загрузки в false в случае ошибки
-                _isLoading.postValue(false)
-                Log.e("JokeListViewModel", "Ошибка при загрузке шуток: ${e.message}")
-            }
-        }
-    }
+//    fun loadJokes() {
+//        viewModelScope.launch {
+//            try {
+//                // Устанавливаем состояние загрузки в true
+//                _isLoading.postValue(true)
+//
+//                // Загружаем шутку и изображение
+//                val joke = repository.getRandomChuckNorrisJoke()
+//                val jokeTitle = generateTitleFromText(repository.getRandomChuckNorrisJoke().value).toString().replace("\"", "\\\"")
+//                val imageUrl = loadChuckNorrisJokeImage(joke.value)
+//
+//                // Выводим список шуток и URL изображения в логи
+//                Log.d("JokeListViewModel", "Загружен список шуток: $joke")
+//                Log.d("JokeListViewModel", "URL изображения: $imageUrl")
+//                Log.d("JokeListViewModel", "Title шутки: $jokeTitle")
+//
+//                // Создаем объект, который содержит как шутку, так и URL изображения
+//                val jokeWithImage = ChuckNorrisJokeWithImage(joke, imageUrl, jokeTitle)
+//
+//                // Обновляем LiveData, чтобы передать как шутку, так и URL изображения
+//                _jokes.postValue(listOf(jokeWithImage))
+//
+//                // Устанавливаем состояние загрузки в false
+//                _isLoading.postValue(false)
+//            } catch (e: Exception) {
+//                // Устанавливаем состояние загрузки в false в случае ошибки
+//                _isLoading.postValue(false)
+//                Log.e("JokeListViewModel", "Ошибка при загрузке joke: ${e.message}")
+//            }
+//        }
+//    }
 
     suspend fun generateTitleFromText(text: String): String? {
         return try {
@@ -84,7 +81,7 @@ class JokeListViewModel @Inject constructor(private val repository: ChuckNorrisR
                     .build()
 
                 val mediaType = "application/json".toMediaTypeOrNull()
-                val requestBody = RequestBody.create(mediaType, "{\"text\": \"$text\", \"lang\": \"en\"}")
+                val requestBody = "{\"text\": \"$text\", \"lang\": \"en\"}".toRequestBody(mediaType)
 
                 val request = Request.Builder()
                     .url("https://article-extractor-and-summarizer.p.rapidapi.com/summarize-text")
