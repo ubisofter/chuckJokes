@@ -230,8 +230,8 @@ implementation 'com.google.android.material:material:1.9.0'
 - Random Chuck Norris Jokes API (Open) [Сhucknorris.io](https://api.chucknorris.io/)
 
 ## 🍰 Contribution
-If you'd like to contribute to the Chuck Jokes App, feel free to create a pull request. We welcome any contributions!
+If you'd like to contribute to the Chuck Jokes App, feel free to create a pull request. I'm welcome any contributions!
 
-## 📃 License open
+## 📃 MIT License 
 
 ## Created with ❤️ with the support of Chuck Norris.
